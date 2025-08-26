@@ -13,18 +13,20 @@ const ManualPage = async () => {
       entitiesService.getEntity('districts'),
    ]);
 
-   console.log('estateTypesData:', estateTypesData);
-   console.log('roomsData:', roomsData);
-   console.log('dealTermsData:', dealTermsData);
-   console.log('citiesData:', citiesData);
-   console.log('currencyTypesData:', currencyTypesData);
-   console.log('districtsData:', districtsData);
-
    if (!estateTypesData || !roomsData || !dealTermsData || !citiesData || !currencyTypesData || !districtsData) {
       return <div>Error loading data</div>;
    }
 
-   return <AddOrEditManualEstate />;
+   return (
+      <AddOrEditManualEstate
+         estateTypes={estateTypesData}
+         rooms={roomsData}
+         dealTerms={dealTermsData}
+         cities={citiesData}
+         currencyTypes={currencyTypesData}
+         districts={districtsData}
+      />
+   );
 };
 
 export default ManualPage;

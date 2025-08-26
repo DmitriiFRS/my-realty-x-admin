@@ -9,9 +9,9 @@ export const entitiesService = {
       } catch (error) {
          if (axios.isAxiosError(error)) {
             console.error(`Axios error fetching "${entity}":`);
-         }
-         if (error.response) {
-            console.error('Data:', error.response.data);
+            if (error.response) {
+               console.error('Data:', error.response.data);
+            }
          }
       }
    },
