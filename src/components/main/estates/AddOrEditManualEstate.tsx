@@ -11,11 +11,11 @@ import DropzoneComponent from '@/components/form/form-elements/DropZone';
 import Select from '@/components/form/Select';
 import Button from '@/components/ui/button/Button';
 import { IEntity } from '@/types/entities.type';
-import { useEffect } from 'react';
 import NumberInput from '@/components/form/input/InputNumberField';
 import { handleSubmitCall } from '@/helpers/handleSubmitCall';
 import { estatesService } from '@/service/estates/estates.service';
-import { ICreateEstateData } from '@/types/estates.type';
+import { ICreateEstateData, IEstate, IUpdateEstateData } from '@/types/estates.type';
+import { IMedia } from '@/types/common.type';
 
 const schema = z.object({
    description: z.string(),
@@ -28,6 +28,7 @@ const schema = z.object({
    area: z.string().min(1, 'Минимум 1').transform(Number),
    price: z.string().min(1, 'Минимум 1').transform(Number),
    primaryImage: z.any().optional(),
+   existingImages: z.array(z.any()).optional(),
    images: z.array(z.any()).optional(),
 });
 
@@ -41,48 +42,74 @@ interface Props {
    cities: IEntity[];
    currencyTypes: IEntity[];
    districts: IEntity[];
+   estate?: IEstate;
 }
 
-const AddOrEditManualEstate: React.FC<Props> = ({ estateTypes, rooms, dealTerms, cities, currencyTypes, districts }) => {
+const AddOrEditManualEstate: React.FC<Props> = ({ estateTypes, rooms, dealTerms, cities, currencyTypes, districts, estate }) => {
    const {
       handleSubmit,
       control,
       watch,
+      getValues,
+
+      setValue,
       formState: { errors },
    } = useForm<FormInput, any, FormOutput>({
       resolver: zodResolver(schema),
       defaultValues: {
-         description: '',
-         estateTypeId: undefined,
-         cityId: undefined,
-         districtId: undefined,
-         roomId: undefined,
-         currencyTypeId: undefined,
-         dealTermId: undefined,
-         area: undefined,
-         price: undefined,
-         primaryImage: undefined,
+         description: estate?.description || '',
+         estateTypeId: estate?.estateType?.id || undefined,
+         cityId: estate?.city?.id || undefined,
+         districtId: estate?.district?.id || undefined,
+         roomId: estate?.room?.id || undefined,
+         currencyTypeId: estate?.currencyType?.id || undefined,
+         dealTermId: estate?.dealTerm?.id || undefined,
+         area: estate?.area.toString() || undefined,
+         price: estate?.price || undefined,
+         primaryImage: estate?.primaryImageUrl || undefined,
+         existingImages: estate?.media || [],
          images: [],
       },
    });
 
-   useEffect(() => {
-      console.log('Form Values Changed:');
-      console.log(watch());
-      console.log('Form Errors:', errors);
-   }, [watch(), errors]);
+   // useEffect(() => {
+   //    console.log('Form Values Changed:');
+   //    console.log(watch());
+   //    console.log('Form Errors:', errors);
+   // }, [watch(), errors]);
+
+   function removeImageFromArray(item: File | IMedia) {
+      const existingArr = getValues().existingImages || [];
+      const imagesArr = getValues().images || [];
+      if (item instanceof File) {
+         const updatedImages = imagesArr.filter((img) => img !== item);
+         setValue('images', updatedImages);
+      } else {
+         const updatedExistingImages = existingArr.filter((img) => img.id !== item.id);
+         setValue('existingImages', updatedExistingImages);
+      }
+   }
 
    const onSubmit = async (data: FormOutput) => {
-      handleSubmitCall({
-         apiCall: () => estatesService.createEstate(data as ICreateEstateData),
-         setLoading: () => {},
-         successMessage: 'Объявление успешно создано',
-         errorMessage: 'Ошибка при создании объявления',
-      });
+      if (estate) {
+         handleSubmitCall({
+            apiCall: () => estatesService.updateEstate(estate.id, data as IUpdateEstateData),
+            setLoading: () => {},
+            successMessage: 'Объявление успешно обновлено',
+            errorMessage: 'Ошибка при обновлении объявления',
+         });
+      } else {
+         handleSubmitCall({
+            apiCall: () => estatesService.createEstate(data as ICreateEstateData),
+            setLoading: () => {},
+            successMessage: 'Объявление успешно создано',
+            errorMessage: 'Ошибка при создании объявления',
+         });
+      }
    };
    return (
       <div>
-         <PageBreadcrumb pageTitle="Создание объявления" />
+         <PageBreadcrumb pageTitle={estate ? 'Редактирование объявления' : 'Создание объявления'} />
          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-10 md:grid-cols-2">
             <div>
                <div>
@@ -232,7 +259,15 @@ const AddOrEditManualEstate: React.FC<Props> = ({ estateTypes, rooms, dealTerms,
                <Controller
                   name="images"
                   control={control}
-                  render={({ field }) => <DropzoneComponent title="Массив картинок" value={field.value} onChange={field.onChange} />}
+                  render={({ field }) => (
+                     <DropzoneComponent
+                        title="Массив картинок"
+                        value={field.value}
+                        onChange={field.onChange}
+                        existingImages={watch('existingImages') as IMedia[] | undefined}
+                        removeImageFromArray={removeImageFromArray}
+                     />
+                  )}
                />
             </div>
             <div className="">

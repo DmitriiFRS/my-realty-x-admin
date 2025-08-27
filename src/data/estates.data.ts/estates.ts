@@ -5,7 +5,7 @@ export const estateStatuses = [
    },
    {
       id: 1,
-      slug: 'awaiting',
+      slug: 'pending',
    },
    {
       id: 2,

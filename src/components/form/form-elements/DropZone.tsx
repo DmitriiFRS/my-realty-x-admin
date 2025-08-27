@@ -3,15 +3,19 @@
 import React from 'react';
 import ComponentCard from '../../common/ComponentCard';
 import { useDropzone } from 'react-dropzone';
+import { IMedia } from '@/types/common.type';
+import Image from 'next/image';
 
 interface Props {
    title: string;
    isSingleImage?: boolean;
    value: any | any[];
    onChange: (files: File | File[] | null) => void;
+   existingImages?: IMedia[];
+   removeImageFromArray?: (item: File | IMedia) => void;
 }
 
-const DropzoneComponent: React.FC<Props> = ({ title, isSingleImage = false, value, onChange }) => {
+const DropzoneComponent: React.FC<Props> = ({ title, isSingleImage = false, value, onChange, existingImages, removeImageFromArray }) => {
    const onDrop = (acceptedFiles: File[]) => {
       if (isSingleImage) {
          onChange(acceptedFiles.length > 0 ? acceptedFiles[0] : null);
@@ -32,6 +36,8 @@ const DropzoneComponent: React.FC<Props> = ({ title, isSingleImage = false, valu
    });
    const filesToDisplay = isSingleImage && value ? [value] : (value as File[]) || [];
 
+   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '';
+
    return (
       <ComponentCard title={title}>
          <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
@@ -49,7 +55,7 @@ const DropzoneComponent: React.FC<Props> = ({ title, isSingleImage = false, valu
                {/* Hidden Input */}
                <input {...getInputProps()} />
 
-               {filesToDisplay.length === 0 ? (
+               {filesToDisplay.length === 0 && (!existingImages || !existingImages.length) ? (
                   <div className="dz-message flex flex-col items-center m-0!">
                      <div className="mb-[22px] flex justify-center">
                         <div className="flex h-[68px] w-[68px]  items-center justify-center rounded-full bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400">
@@ -75,11 +81,45 @@ const DropzoneComponent: React.FC<Props> = ({ title, isSingleImage = false, valu
                   </div>
                ) : (
                   <div className="flex flex-wrap gap-4">
-                     {filesToDisplay.map((file, index) => (
-                        <div key={index} className="w-24 h-24 overflow-hidden rounded-lg">
-                           <img src={URL.createObjectURL(file)} alt={`Preview of ${file.name}`} className="object-cover w-full h-full" />
-                        </div>
-                     ))}
+                     {!isSingleImage &&
+                        existingImages &&
+                        existingImages.length > 0 &&
+                        existingImages.map((img, index) => {
+                           return (
+                              <div key={index} className="w-24 h-24 overflow-hidden rounded-lg">
+                                 <Image
+                                    src={backendUrl + img.url}
+                                    alt={'img'}
+                                    width={1000}
+                                    height={1000}
+                                    className="object-cover w-full h-full"
+                                 />
+                              </div>
+                           );
+                        })}
+                     {filesToDisplay.map((file, index) => {
+                        return file instanceof File ? (
+                           <div key={index} className="w-24 h-24 overflow-hidden rounded-lg">
+                              <Image
+                                 width={1000}
+                                 height={1000}
+                                 src={URL.createObjectURL(file)}
+                                 alt={`Preview of ${file.name}`}
+                                 className="object-cover w-full h-full"
+                              />
+                           </div>
+                        ) : (
+                           <div key={index} className="w-24 h-24 overflow-hidden rounded-lg">
+                              <Image
+                                 src={backendUrl + file}
+                                 alt={'img'}
+                                 width={1000}
+                                 height={1000}
+                                 className="object-cover w-full h-full"
+                              />
+                           </div>
+                        );
+                     })}
                   </div>
                )}
             </div>

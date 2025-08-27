@@ -26,7 +26,7 @@ const navItems: NavItem[] = [
       icon: <GridIcon />,
       subItems: [
          { name: 'Активные', path: '/estates/active', pro: false },
-         { name: 'Ожидают модерации', path: '/estates/awaiting', pro: false },
+         { name: 'Ожидают модерации', path: '/estates/pending', pro: false },
          { name: 'Отклоненные', path: '/estates/rejected', pro: false },
          { name: 'Ручное добавление', path: '/estates/manual', pro: false },
       ],
@@ -52,7 +52,7 @@ const navItems: NavItem[] = [
       icon: <ListIcon />,
       subItems: [
          { name: 'Все отзывы', path: '/reviews', pro: false },
-         { name: 'Ожидают модерации', path: '/reviews/awaiting', pro: false },
+         { name: 'Ожидают модерации', path: '/reviews/pending', pro: false },
          { name: 'Отклоненные', path: '/reviews/rejected', pro: false },
       ],
    },
