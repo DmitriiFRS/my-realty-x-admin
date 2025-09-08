@@ -16,6 +16,9 @@ import { handleSubmitCall } from '@/helpers/handleSubmitCall';
 import { estatesService } from '@/service/estates/estates.service';
 import { ICreateEstateData, IEstate, IUpdateEstateData } from '@/types/estates.type';
 import { IMedia } from '@/types/common.type';
+import Checkbox from '@/components/form/input/Checkbox';
+import { statuses } from '@/data/statuses.data';
+import { useEffect } from 'react';
 
 const schema = z.object({
    description: z.string(),
@@ -27,6 +30,8 @@ const schema = z.object({
    dealTermId: z.number().positive(),
    area: z.string().min(1, 'Минимум 1').transform(Number),
    price: z.string().min(1, 'Минимум 1').transform(Number),
+   featureIds: z.array(z.number().positive()).optional(),
+   status: z.enum(['pending', 'verified', 'rejected']),
    primaryImage: z.any().optional(),
    existingImages: z.array(z.any()).optional(),
    images: z.array(z.any()).optional(),
@@ -42,10 +47,20 @@ interface Props {
    cities: IEntity[];
    currencyTypes: IEntity[];
    districts: IEntity[];
+   estateFeatures: IEntity[];
    estate?: IEstate;
 }
 
-const AddOrEditManualEstate: React.FC<Props> = ({ estateTypes, rooms, dealTerms, cities, currencyTypes, districts, estate }) => {
+const AddOrEditManualEstate: React.FC<Props> = ({
+   estateTypes,
+   rooms,
+   dealTerms,
+   cities,
+   currencyTypes,
+   districts,
+   estateFeatures,
+   estate,
+}) => {
    const {
       handleSubmit,
       control,
@@ -66,17 +81,19 @@ const AddOrEditManualEstate: React.FC<Props> = ({ estateTypes, rooms, dealTerms,
          dealTermId: estate?.dealTerm?.id || undefined,
          area: estate?.area.toString() || undefined,
          price: estate?.price || undefined,
+         featureIds: estate?.features.map((el) => el.id) || [],
+         status: estate?.status?.status || 'pending',
          primaryImage: estate?.primaryImageUrl || undefined,
          existingImages: estate?.media || [],
          images: [],
       },
    });
 
-   // useEffect(() => {
-   //    console.log('Form Values Changed:');
-   //    console.log(watch());
-   //    console.log('Form Errors:', errors);
-   // }, [watch(), errors]);
+   useEffect(() => {
+      console.log('Form Values Changed:');
+      console.log(watch());
+      console.log('Form Errors:', errors);
+   }, [watch(), errors]);
 
    function removeImageFromArray(item: File | IMedia) {
       const existingArr = getValues().existingImages || [];
@@ -246,6 +263,52 @@ const AddOrEditManualEstate: React.FC<Props> = ({ estateTypes, rooms, dealTerms,
                      <Label>Цена</Label>
                      <NumberInput type="text" control={control} name="price" error={errors.price} />
                   </div>
+               </div>
+               <div className="mt-10 grid grid-cols-3">
+                  {estateFeatures &&
+                     estateFeatures.length > 0 &&
+                     estateFeatures.map((el, index) => {
+                        const isChecked = watch('featureIds')?.includes(el.id);
+                        return (
+                           <div key={index}>
+                              <Checkbox
+                                 label={el.name}
+                                 checked={isChecked || false}
+                                 onChange={(isChecked: boolean) => {
+                                    const featureIds = getValues('featureIds') || [];
+                                    if (isChecked) {
+                                       setValue('featureIds', [...featureIds, el.id]);
+                                    } else {
+                                       setValue(
+                                          'featureIds',
+                                          featureIds.filter((id) => id !== el.id)
+                                       );
+                                    }
+                                 }}
+                              />
+                           </div>
+                        );
+                     })}
+               </div>
+               <div className="mt-5 flex flex-col max-w-[calc(50%-20px)]">
+                  <Label>Статус</Label>
+                  <Controller
+                     name="status"
+                     control={control}
+                     render={({ field }) => {
+                        const selectedStatusId = statuses.find((s) => s.slug === field.value.toLowerCase())?.id;
+                        return (
+                           <Select
+                              options={statuses}
+                              onChange={(e) => field.onChange(statuses.find((status) => status.id === Number(e.target.value))?.slug)}
+                              value={selectedStatusId}
+                              placeholder="Select Option"
+                              className="dark:bg-dark-900"
+                              error={errors.status}
+                           />
+                        );
+                     }}
+                  />
                </div>
             </div>
             <div className="flex flex-col gap-10">

@@ -4,7 +4,7 @@ import { FieldError } from 'react-hook-form';
 interface Option {
    slug: string;
    name: string;
-   id: number;
+   id: number | string;
 }
 
 interface SelectProps {

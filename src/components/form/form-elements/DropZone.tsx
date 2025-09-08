@@ -15,7 +15,7 @@ interface Props {
    removeImageFromArray?: (item: File | IMedia) => void;
 }
 
-const DropzoneComponent: React.FC<Props> = ({ title, isSingleImage = false, value, onChange, existingImages, removeImageFromArray }) => {
+const DropzoneComponent: React.FC<Props> = ({ title, isSingleImage = false, value, onChange, existingImages }) => {
    const onDrop = (acceptedFiles: File[]) => {
       if (isSingleImage) {
          onChange(acceptedFiles.length > 0 ? acceptedFiles[0] : null);

@@ -2,6 +2,8 @@
 
 import Delete from '@/components/svgs/Delete';
 import Edit from '@/components/svgs/Edit';
+import { handleSubmitCall } from '@/helpers/handleSubmitCall';
+import { estatesService } from '@/service/estates/estates.service';
 import { IEstatesResponse } from '@/types/estates.type';
 import Link from 'next/link';
 import React from 'react';
@@ -12,7 +14,12 @@ interface Props {
 
 export default function ItemsList({ data }: Props) {
    const handleDelete = (id: number) => {
-      console.log('delete', id);
+      handleSubmitCall({
+         apiCall: () => estatesService.deleteEstate(id),
+         setLoading: () => {},
+         successMessage: 'Объявление успешно удалено',
+         errorMessage: 'Ошибка при удалении объявления',
+      });
    };
 
    return (

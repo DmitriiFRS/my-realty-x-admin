@@ -14,7 +14,9 @@ export const estatesService = {
       formData.append('dealTermId', data.dealTermId.toString());
       formData.append('area', data.area.toString());
       formData.append('price', data.price.toString());
+      formData.append('status', data.status);
       formData.append('primaryImage', data.primaryImage);
+      formData.append('features', JSON.stringify(data.featureIds));
       data.images.forEach((image) => {
          formData.append(`images`, image);
       });
@@ -31,6 +33,7 @@ export const estatesService = {
    },
 
    async updateEstate(id: number, data: IUpdateEstateData) {
+      console.log('Updating estate with data:', data.existingImages);
       const formData = new FormData();
       formData.append('description', data.description);
       formData.append('estateTypeId', data.estateTypeId.toString());
@@ -41,6 +44,8 @@ export const estatesService = {
       formData.append('dealTermId', data.dealTermId.toString());
       formData.append('area', data.area.toString());
       formData.append('price', data.price.toString());
+      formData.append('status', data.status);
+      formData.append('features', JSON.stringify(data.featureIds));
       if (data.primaryImage instanceof File) {
          formData.append('primaryImage', data.primaryImage);
       }
@@ -49,18 +54,24 @@ export const estatesService = {
             formData.append(`images`, image);
          });
       }
-      const existingImageIds: number[] = [];
-      data.existingImages.forEach((image) => {
-         existingImageIds.push(image.id);
-      });
-      formData.append('existingImageIds', JSON.stringify(existingImageIds));
-
+      if (data.existingImages && data.existingImages.length > 0) {
+         formData.append('existingImageIds', JSON.stringify(data.existingImages.map((i) => i.id)));
+      }
       try {
-         const response = instance.put(`/estates/update/${id}`, formData, {
+         const response = instance.put(`/estates/admin-update/${id}`, formData, {
             headers: {
                'Content-Type': 'multipart/form-data',
             },
          });
+         return response;
+      } catch (error) {
+         handleAxiosError(error);
+      }
+   },
+
+   async deleteEstate(id: number) {
+      try {
+         const response = await instance.delete(`/estates/admin-delete/${id}`);
          return response;
       } catch (error) {
          handleAxiosError(error);

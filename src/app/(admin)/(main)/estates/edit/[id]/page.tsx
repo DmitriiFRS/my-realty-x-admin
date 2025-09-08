@@ -12,16 +12,17 @@ const page: React.FC<Props> = async ({ params }) => {
    if (!data) {
       return notFound();
    }
-   const [estateTypesData, roomsData, dealTermsData, citiesData, currencyTypesData, districtsData] = await Promise.all([
+   const [estateTypesData, roomsData, dealTermsData, citiesData, currencyTypesData, districtsData, estateFeaturesData] = await Promise.all([
       entitiesService.getEntity('estate-types'),
       entitiesService.getEntity('rooms'),
       entitiesService.getEntity('deal-terms'),
       entitiesService.getEntity('cities'),
       entitiesService.getEntity('currency-types'),
       entitiesService.getEntity('districts'),
+      entitiesService.getEntity('estate-features'),
    ]);
 
-   if (!estateTypesData || !roomsData || !dealTermsData || !citiesData || !currencyTypesData || !districtsData) {
+   if (!estateTypesData || !roomsData || !dealTermsData || !citiesData || !currencyTypesData || !districtsData || !estateFeaturesData) {
       return <div>Error loading data</div>;
    }
 
@@ -33,6 +34,7 @@ const page: React.FC<Props> = async ({ params }) => {
          cities={citiesData}
          currencyTypes={currencyTypesData}
          districts={districtsData}
+         estateFeatures={estateFeaturesData}
          estate={data.data}
       />
    );
