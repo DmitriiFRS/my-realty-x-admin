@@ -50,6 +50,7 @@ jobs:
                 public \
                 package.json \
                 package-lock.json \
+                next.config.ts \
                 .env \
                 ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ secrets.TARGET_DIRECTORY }}/
 
