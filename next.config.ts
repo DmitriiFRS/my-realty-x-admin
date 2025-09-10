@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
             protocol: 'http',
             hostname: 'localhost',
          },
+         {
+            protocol: 'https',
+            hostname: 'api-realty-x.kelyanmedia.com',
+         },
       ],
    },
    webpack(config) {
