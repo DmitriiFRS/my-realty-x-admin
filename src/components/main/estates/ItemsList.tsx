@@ -22,8 +22,8 @@ export default function ItemsList({ status }: Props) {
       };
       fetchData();
    }, []);
-   const handleDelete = (id: number) => {
-      handleSubmitCall({
+   const handleDelete = async (id: number) => {
+      await handleSubmitCall({
          apiCall: () => estatesService.deleteEstate(id),
          setLoading: () => {},
          successMessage: 'Объявление успешно удалено',
