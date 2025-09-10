@@ -7,7 +7,7 @@ import { ChevronDownIcon } from '@/icons';
 
 export default function SelectInputs() {
    const [selectedValues, setSelectedValues] = useState<string[]>([]);
-
+   //
    const multiOptions = [
       { value: '1', text: 'Option 1', selected: false },
       { value: '2', text: 'Option 2', selected: false },
