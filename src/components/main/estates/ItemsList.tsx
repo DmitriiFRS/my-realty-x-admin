@@ -18,6 +18,7 @@ export default function ItemsList({ status }: Props) {
    useEffect(() => {
       const fetchData = async () => {
          const result = await entitiesService.getEntity(`estates/${status}`);
+         console.log(result);
          setList(result);
       };
       fetchData();

@@ -21,7 +21,7 @@ export const estatesService = {
          formData.append(`images`, image);
       });
       try {
-         const response = instance.post('/estates/create', formData, {
+         const response = instance.post('/estates/admin-create', formData, {
             headers: {
                'Content-Type': 'multipart/form-data',
             },
