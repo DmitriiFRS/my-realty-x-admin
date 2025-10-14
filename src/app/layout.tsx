@@ -5,16 +5,20 @@ import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { ToastContainer } from 'react-toastify';
 import NextTopLoader from 'nextjs-toploader';
+import { AuthProvider } from '@/context/AuthContext';
+import { cookies } from 'next/headers';
 
 const outfit = Outfit({
    subsets: ['latin'],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
    children,
 }: Readonly<{
    children: React.ReactNode;
 }>) {
+   const cookieStore = await cookies();
+   const token = cookieStore.get('admin-token')?.value;
    return (
       <html lang="en">
          <body className={`${outfit.className} dark:bg-gray-900`}>
@@ -28,7 +32,9 @@ export default function RootLayout({
                shadow="0 0 10px #fff,0 0 5px #fff"
             />
             <ThemeProvider>
-               <SidebarProvider>{children}</SidebarProvider>
+               <AuthProvider token={token}>
+                  <SidebarProvider>{children}</SidebarProvider>
+               </AuthProvider>
             </ThemeProvider>
          </body>
       </html>

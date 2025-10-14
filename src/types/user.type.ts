@@ -3,3 +3,27 @@ export interface IUser {
    name: string;
    phone: string;
 }
+
+export interface IUserData {
+   id: number;
+   name: string;
+   phone: string;
+   password: string;
+}
+
+export interface IResponseUserData {
+   token: string | undefined;
+   user: IUserData;
+}
+
+export interface IUserDataWithRole {
+   id: number;
+   name: string;
+   phone: string;
+   password: string;
+   role: {
+      id: number;
+      slug: string;
+      name: string;
+   };
+}
