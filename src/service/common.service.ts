@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const commonService = {
    async getData(urlParam: string, token?: string | undefined) {
       try {
@@ -21,6 +23,28 @@ export const commonService = {
             data: null,
             errorMessage: error instanceof Error ? error.message : 'Не удалось загрузить данные',
          };
+      }
+   },
+   async getSearchedItems(searchText: string) {
+      try {
+         const tokenRes = await fetch('/api/get-token');
+         if (!tokenRes.ok) {
+            throw new Error(`Не удалось получить токен: ${tokenRes.statusText}`);
+         }
+         const data = await tokenRes.json();
+         const token = data.token;
+         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/search`, {
+            params: { searchText },
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         });
+         if (response.status >= 300) {
+            throw new Error('Failed to fetch searched items');
+         }
+         return response.data;
+      } catch (error) {
+         console.log('Error in getSearchedItems:', error);
       }
    },
 };

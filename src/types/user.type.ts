@@ -2,6 +2,12 @@ export interface IUser {
    id: number;
    name: string;
    phone: string;
+   createdAt: string;
+   rating: number;
+}
+
+export interface IUserResponse {
+   data: IUser[];
 }
 
 export interface IUserData {

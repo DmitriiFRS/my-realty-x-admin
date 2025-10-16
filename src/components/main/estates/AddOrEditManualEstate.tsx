@@ -18,7 +18,8 @@ import { ICreateEstateData, IEstate, IUpdateEstateData } from '@/types/estates.t
 import { IMedia } from '@/types/common.type';
 import Checkbox from '@/components/form/input/Checkbox';
 import { statuses } from '@/data/statuses.data';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import SearchDropdownInput from '@/components/form/SearchDropdownInput';
 
 const schema = z.object({
    description: z.string(),
@@ -32,6 +33,7 @@ const schema = z.object({
    price: z.string().min(1, 'Минимум 1').transform(Number),
    featureIds: z.array(z.number().positive()).optional(),
    status: z.enum(['pending', 'verified', 'rejected']),
+   targetUserId: z.number({ message: 'Требуется выбрать отправителя' }),
    primaryImage: z.any().optional(),
    existingImages: z.array(z.any()).optional(),
    images: z.array(z.any()).optional(),
@@ -61,10 +63,18 @@ const AddOrEditManualEstate: React.FC<Props> = ({
    estateFeatures,
    estate,
 }) => {
+   const [targetUserValue, setTargetUserValue] = useState<string>('');
+   useEffect(() => {
+      if (!estate?.user?.id) return;
+      if (estate?.user?.name && estate?.user?.phone) setTargetUserValue(estate.user.name + ' ' + estate.user.phone);
+      console.log(estate?.user);
+   }, [estate]);
+
    const {
       handleSubmit,
       control,
       watch,
+      reset,
       getValues,
 
       setValue,
@@ -83,11 +93,22 @@ const AddOrEditManualEstate: React.FC<Props> = ({
          price: estate?.price || undefined,
          featureIds: estate?.features.map((el) => el.id) || [],
          status: estate?.status?.status || 'pending',
+         targetUserId: estate?.user?.id || undefined,
          primaryImage: estate?.primaryImageUrl || undefined,
          existingImages: estate?.media || [],
          images: [],
       },
    });
+
+   useEffect(() => {
+      if (estate) {
+         setTargetUserValue(estate.user?.name + ' ' + estate.user?.phone);
+         const formValues = {
+            targetUserId: estate.user?.id || undefined,
+         };
+         reset(formValues);
+      }
+   }, [estate]);
 
    useEffect(() => {
       console.log('Form Values Changed:');
@@ -126,6 +147,7 @@ const AddOrEditManualEstate: React.FC<Props> = ({
    };
    return (
       <div>
+         {/* {<pre>{JSON.stringify(errors, null, 2)}</pre>} */}
          <PageBreadcrumb pageTitle={estate ? 'Редактирование объявления' : 'Создание объявления'} />
          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-10 md:grid-cols-2">
             <div>
@@ -310,6 +332,16 @@ const AddOrEditManualEstate: React.FC<Props> = ({
                      }}
                   />
                </div>
+               <div className="mt-7.5">
+                  <SearchDropdownInput
+                     name="targetUserId"
+                     setValue={setValue}
+                     error={errors.targetUserId}
+                     placeholder="Поиск пользователя по ФИО или телефону"
+                     searchValue={targetUserValue}
+                     setSearchValue={setTargetUserValue}
+                  />
+               </div>
             </div>
             <div className="flex flex-col gap-10">
                <Controller
@@ -334,7 +366,7 @@ const AddOrEditManualEstate: React.FC<Props> = ({
                />
             </div>
             <div className="">
-               <Button>Применить</Button>
+               <Button type="submit">Применить</Button>
             </div>
          </form>
       </div>

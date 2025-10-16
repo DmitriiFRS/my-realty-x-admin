@@ -1,14 +1,16 @@
 import axios from 'axios';
 import { instance } from '../apiConfig';
 
-export const entitiesService = {
-   async getEntity(entity: string) {
-      const tokenData = await axios.get('/api/get-token');
-      if (!tokenData) return null;
+export const serverEntitiesService = {
+   async getEntity(entity: string, token: string | undefined) {
+      if (!token) {
+         console.error('No token provided');
+         return null;
+      }
       try {
          const response = await instance.get(entity, {
             headers: {
-               Authorization: `Bearer ${tokenData?.data?.token}`,
+               Authorization: `Bearer ${token}`,
             },
          });
          return response.data;

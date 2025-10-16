@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSidebar } from '../context/SidebarContext';
-import { ChevronDownIcon, GridIcon, HorizontaLDots, ListIcon, ShootingStarIcon } from '../icons/index';
+import { ChevronDownIcon, GridIcon, HorizontaLDots, ShootingStarIcon } from '../icons/index';
 
 type NavItem = {
    name: string;
@@ -35,27 +35,27 @@ const navItems: NavItem[] = [
    {
       name: 'Пользователи',
       icon: <GridIcon />,
-      // subItems: [
-      //    { name: 'Пользователи', path: '/users', pro: false },
-      //    { name: 'Роли', path: '/roles', pro: false },
-      // ],
+      subItems: [
+         { name: 'Пользователи', path: '/users/user', pro: false },
+         { name: 'Риелторы', path: '/users/realtor', pro: false },
+      ],
       path: '/users',
    },
    {
-      name: 'Доступы',
+      name: 'Роли и доступы',
       icon: <ShootingStarIcon />,
-      // subItems: [{ name: 'Отзывы', path: '/reviews', pro: false }],
+      subItems: [{ name: 'Роли', path: '/roles', pro: false }],
       path: '/accesses',
    },
-   {
-      name: 'Отзывы',
-      icon: <ListIcon />,
-      subItems: [
-         { name: 'Все отзывы', path: '/reviews', pro: false },
-         { name: 'Ожидают модерации', path: '/reviews/pending', pro: false },
-         { name: 'Отклоненные', path: '/reviews/rejected', pro: false },
-      ],
-   },
+   // {
+   //    name: 'Отзывы',
+   //    icon: <ListIcon />,
+   //    subItems: [
+   //       { name: 'Все отзывы', path: '/reviews', pro: false },
+   //       { name: 'Ожидают модерации', path: '/reviews/pending', pro: false },
+   //       { name: 'Отклоненные', path: '/reviews/rejected', pro: false },
+   //    ],
+   // },
 ];
 
 const othersItems: NavItem[] = [];

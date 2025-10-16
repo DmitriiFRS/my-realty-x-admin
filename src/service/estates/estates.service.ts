@@ -17,13 +17,21 @@ export const estatesService = {
       formData.append('status', data.status);
       formData.append('primaryImage', data.primaryImage);
       formData.append('features', JSON.stringify(data.featureIds));
+      formData.append('targetUserId', data.targetUserId.toString());
       data.images.forEach((image) => {
          formData.append(`images`, image);
       });
+      const tokenRes = await fetch('/api/get-token');
+      if (!tokenRes.ok) {
+         throw new Error(`Не удалось получить токен: ${tokenRes.statusText}`);
+      }
+      const tokenData = await tokenRes.json();
+      const token = tokenData.token;
       try {
          const response = instance.post('/estates/admin-create', formData, {
             headers: {
                'Content-Type': 'multipart/form-data',
+               Authorization: `Bearer ${token}`,
             },
          });
          return response;
@@ -33,7 +41,6 @@ export const estatesService = {
    },
 
    async updateEstate(id: number, data: IUpdateEstateData) {
-      console.log('Updating estate with data:', data.existingImages);
       const formData = new FormData();
       formData.append('description', data.description);
       formData.append('estateTypeId', data.estateTypeId.toString());
@@ -46,6 +53,7 @@ export const estatesService = {
       formData.append('price', data.price.toString());
       formData.append('status', data.status);
       formData.append('features', JSON.stringify(data.featureIds));
+      formData.append('targetUserId', data.targetUserId.toString());
       if (data.primaryImage instanceof File) {
          formData.append('primaryImage', data.primaryImage);
       }
@@ -58,9 +66,16 @@ export const estatesService = {
          formData.append('existingImageIds', JSON.stringify(data.existingImages.map((i) => i.id)));
       }
       try {
+         const tokenRes = await fetch('/api/get-token');
+         if (!tokenRes.ok) {
+            throw new Error(`Не удалось получить токен: ${tokenRes.statusText}`);
+         }
+         const tokenData = await tokenRes.json();
+         const token = tokenData.token;
          const response = instance.put(`/estates/admin-update/${id}`, formData, {
             headers: {
                'Content-Type': 'multipart/form-data',
+               Authorization: `Bearer ${token}`,
             },
          });
          return response;

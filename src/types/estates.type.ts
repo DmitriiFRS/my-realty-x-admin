@@ -18,6 +18,7 @@ export interface ICreateEstateData {
    status: string;
    primaryImage: File;
    images: File[];
+   targetUserId: number;
 }
 
 export interface IUpdateEstateData extends ICreateEstateData {
