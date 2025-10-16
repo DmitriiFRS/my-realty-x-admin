@@ -5,7 +5,7 @@ import { authService } from './service/auth/auth.service';
 export default async function middleware(req: NextRequest) {
    const { pathname } = req.nextUrl;
    const token = req.cookies.get('admin-token')?.value;
-
+   //
    if (token && pathname === '/signin') {
       try {
          const secret = new TextEncoder().encode(process.env.JWT_SECRET || '');
