@@ -25,6 +25,7 @@ jobs:
            run: |
               echo "NEXT_PUBLIC_API=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" > .env
               echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+              echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
          - name: Build Next.js Application
            run: npm run build
