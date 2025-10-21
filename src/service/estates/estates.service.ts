@@ -85,8 +85,18 @@ export const estatesService = {
    },
 
    async deleteEstate(id: number) {
+      const tokenRes = await fetch('/api/get-token');
+      if (!tokenRes.ok) {
+         throw new Error(`Не удалось получить токен: ${tokenRes.statusText}`);
+      }
+      const tokenData = await tokenRes.json();
+      const token = tokenData.token;
       try {
-         const response = await instance.delete(`/estates/admin-delete/${id}`);
+         const response = await instance.delete(`/estates/admin-delete/${id}`, {
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         });
          return response;
       } catch (error) {
          handleAxiosError(error);
