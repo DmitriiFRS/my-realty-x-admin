@@ -105,6 +105,7 @@ const AddOrEditManualEstate: React.FC<Props> = ({
          setTargetUserValue(estate.user?.name + ' ' + estate.user?.phone);
          const formValues = {
             targetUserId: estate.user?.id || undefined,
+            existingImages: estate.media || [],
          };
          reset(formValues);
       }
