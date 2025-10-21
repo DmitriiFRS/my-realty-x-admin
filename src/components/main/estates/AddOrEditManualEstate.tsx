@@ -67,7 +67,7 @@ const AddOrEditManualEstate: React.FC<Props> = ({
    useEffect(() => {
       if (!estate?.user?.id) return;
       if (estate?.user?.name && estate?.user?.phone) setTargetUserValue(estate.user.name + ' ' + estate.user.phone);
-      console.log(estate?.user);
+      console.log(estate);
    }, [estate]);
 
    const {
@@ -110,11 +110,11 @@ const AddOrEditManualEstate: React.FC<Props> = ({
       }
    }, [estate]);
 
-   useEffect(() => {
-      console.log('Form Values Changed:');
-      console.log(watch());
-      console.log('Form Errors:', errors);
-   }, [watch(), errors]);
+   // useEffect(() => {
+   //    console.log('Form Values Changed:');
+   //    console.log(watch());
+   //    console.log('Form Errors:', errors);
+   // }, [watch(), errors]);
 
    function removeImageFromArray(item: File | IMedia) {
       const existingArr = getValues().existingImages || [];

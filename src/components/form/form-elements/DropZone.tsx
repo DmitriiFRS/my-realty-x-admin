@@ -85,6 +85,7 @@ const DropzoneComponent: React.FC<Props> = ({ title, isSingleImage = false, valu
                         existingImages &&
                         existingImages.length > 0 &&
                         existingImages.map((img, index) => {
+                           console.log('existing image:', backendUrl + img.url);
                            return (
                               <div key={index} className="w-24 h-24 overflow-hidden rounded-lg">
                                  <Image

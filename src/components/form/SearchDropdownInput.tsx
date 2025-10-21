@@ -39,7 +39,6 @@ const SearchDropdownInput = <T extends FieldValues>({
          try {
             setLoading(true);
             const data = await commonService.getSearchedItems(searchValue);
-            console.log(data);
             if (data.users) setSearchedItems(data.users);
          } catch (error) {
             console.error('Error setting loading state:', error);
