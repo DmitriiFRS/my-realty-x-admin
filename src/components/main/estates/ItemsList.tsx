@@ -7,6 +7,7 @@ import { entitiesService } from '@/service/entities/entities.service';
 import { estatesService } from '@/service/estates/estates.service';
 import { IEstatesResponse } from '@/types/estates.type';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 
 export default function ItemsList({ status }: Props) {
    const [list, setList] = React.useState<IEstatesResponse | null>(null);
+   const router = useRouter();
    useEffect(() => {
       const fetchData = async () => {
          const result = await entitiesService.getEntity(`estates/${status}`);
@@ -22,15 +24,16 @@ export default function ItemsList({ status }: Props) {
          setList(result);
       };
       fetchData();
-   }, []);
+   }, [router, status]);
    const handleDelete = async (id: number) => {
       await handleSubmitCall({
          apiCall: () => estatesService.deleteEstate(id),
          setLoading: () => {},
          successMessage: 'Объявление успешно удалено',
          errorMessage: 'Ошибка при удалении объявления',
+         onSuccess: router.refresh,
       });
-      window.location.reload();
+      // window.location.reload();
    };
 
    return (
