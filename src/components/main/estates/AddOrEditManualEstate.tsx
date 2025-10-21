@@ -106,6 +106,7 @@ const AddOrEditManualEstate: React.FC<Props> = ({
          const formValues = {
             targetUserId: estate.user?.id || undefined,
             existingImages: estate.media || [],
+            featureIds: estate.features.map((el) => el.id) || [...(getValues().featureIds || [])],
          };
          reset(formValues);
       }
